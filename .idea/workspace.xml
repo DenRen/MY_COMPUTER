@@ -12,11 +12,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc40200-bdc5-461a-80db-ad7423422865" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/MY_COMPUTER.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Super_Stack_Library.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Super_Stack_Library.h" beforeDir="false" afterPath="$PROJECT_DIR$/Super_Stack_Library.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +33,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectId" id="1RyGbxBJmnn1XxMg8COHq7jcJSt" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -39,13 +48,14 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="application.passwordSafe" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/cmake-build-debug" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cmake-build-debug" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -77,7 +87,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1570631997801</updated>
-      <workItem from="1570631999199" duration="3539000" />
+      <workItem from="1570631999199" duration="21752000" />
+      <workItem from="1570796109571" duration="6533000" />
+      <workItem from="1570807815715" duration="699000" />
+      <workItem from="1571132333404" duration="76000" />
+      <workItem from="1571132534067" duration="5000" />
+      <workItem from="1571132577034" duration="5000" />
+      <workItem from="1571132893409" duration="21244000" />
+      <workItem from="1571162873272" duration="3302000" />
+      <workItem from="1571175500123" duration="23235000" />
+      <workItem from="1571259953044" duration="4457000" />
+      <workItem from="1571296455823" duration="1792000" />
     </task>
     <servers />
   </component>
@@ -89,10 +109,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="read_b" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

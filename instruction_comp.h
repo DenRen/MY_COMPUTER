@@ -1,0 +1,10 @@
+//
+// Created by tester on 15.10.2019.
+//
+
+#ifndef MY_COMPUTER_INSTRUCTION_COMP_H
+#define MY_COMPUTER_INSTRUCTION_COMP_H
+
+
+
+#endif //MY_COMPUTER_INSTRUCTION_COMP_H

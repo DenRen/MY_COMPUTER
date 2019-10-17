@@ -5,15 +5,12 @@
 #ifndef SUPER_STACK_SUPER_STACK_LIBRARY_H
 #define SUPER_STACK_SUPER_STACK_LIBRARY_H
 
+#include "MyLib.h"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <random>
 #include <cassert>
-
-#define LOCATION __FILE__, __LINE__, __PRETTY_FUNCTION__
-#define PRINT_ERROR(message) printf("\nERROR %s(%d) IN %s: %s\n", LOCATION, message);
-#define PRINT_WARNING(message) printf("\nwarning %s(%d) IN %s: %s\n", LOCATION, message);
 
 namespace stck {
     typedef double type_Stack;

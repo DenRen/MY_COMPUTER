@@ -84,7 +84,16 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/tester/Documents/GitHub/MY_COMPUTER/COMPILATOR.h">
+			<Option target="MY_COMPUTER"/>
+		</Unit>
+		<Unit filename="/home/tester/Documents/GitHub/MY_COMPUTER/MyLib.h">
+			<Option target="MY_COMPUTER"/>
+		</Unit>
 		<Unit filename="/home/tester/Documents/GitHub/MY_COMPUTER/Super_Stack_Library.h">
+			<Option target="MY_COMPUTER"/>
+		</Unit>
+		<Unit filename="/home/tester/Documents/GitHub/MY_COMPUTER/instruction_comp.h">
 			<Option target="MY_COMPUTER"/>
 		</Unit>
 		<Unit filename="/home/tester/Documents/GitHub/MY_COMPUTER/main.cpp">

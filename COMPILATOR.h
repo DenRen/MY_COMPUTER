@@ -26,7 +26,10 @@ enum COMMANDS {
     cmd_SUB,
     cmd_MUL,
     cmd_EXIT,
+    cmd_SQRT,
     cmd_SIN,
+    cmd_COS,
+    cmd_LOGN
 };
 
 enum REGISTERS {
@@ -39,7 +42,11 @@ const char commands[][MAXLENCOMM] = {
         "add",
         "sub",
         "mul",
-        "exit"
+        "exit",
+        "sqrt",
+        "sin",
+        "cos",
+        "logn"
 };
 
 const char registers[][MAXLENREGS] = {

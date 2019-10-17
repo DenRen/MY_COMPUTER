@@ -1,13 +1,21 @@
-    push ax;
+    push ax; 332
 push bx;;   s;sadfsadf
 push cx
 push -232314234.5161684894189489489464546868426142414401451051
 
 push [7+ax]
+push [dx+-186]
 push 5
 
+pop
 
+add
+pop [cx + -5]
+logn [   ax + 6
+ ] ;dg
+exit
+sadfs
 
-
+sadf
 
 ;sdf

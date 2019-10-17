@@ -119,19 +119,24 @@ namespace conv {
     };
 };
 
-int buf_comp_POP (char **read_b, char *element) {
+int buf_comp_POP (char **read_b, char *element, bool next = true) {
+    static char *read_e;
+
+    if (!next) {
+        *read_b = read_e + 1;
+        return 0;
+    }
+
     char sep = symb_separator;
 
-    char *read_e = (char *) strchr (*read_b, sep);
+    read_e = (char *) strchr (*read_b, sep);
 
     if (read_e == nullptr)
         return conv::BUF_ENDED;
-    // Выделяем слово, между пробелами
 
+    // Выделяем слово, между пробелами
     if (copy_str (element, *read_b, read_e))
         return conv::CMD_TOO_LARGE;
-
-    *read_b = read_e + 1;
 
     return 0;
 }
@@ -140,7 +145,8 @@ int el_is_number (char c) {
     return c >= '0' && c <= '9';
 }
 
-int element_type_d (const char *element, number_t *arg_num, reg_t *arg_reg) {
+// Возвращает -1, если element не может быть аргументом функции
+int element_type_d (const char *element) {
     const char *necess_symbols = necess_symb;
     const char *RAM_symbols = RAM_symb;
     const char *element_old = element;
@@ -159,17 +165,14 @@ int element_type_d (const char *element, number_t *arg_num, reg_t *arg_reg) {
             while (el_is_number (*(++element)));
         if (!el_is_number (*(element - 1)))
             return -1;
-        *arg_num = strtod (element_old, nullptr);
         return conv::NUMBER;
     } else {                                    // registers
         unsigned i = 0;
         for (; i < size_registers + 1; i++)
             if (i == size_registers)
                 return -1;
-            else if (!strcmp (element, registers[i])) {
-                *arg_reg = i;
+            else if (!strcmp (element, registers[i]))
                 return conv::REGISTER;
-            }
     }
     return -1;
 }
@@ -195,14 +198,9 @@ char *ConverterToMC (Compiler_t *data) {
         char element[MAXLENCOMM];   // Тут хранится текущий объект buf (Например: push, add, 5)
         unsigned number_line = 0;
 
-#define GET_NEXT !(data->state_func = buf_comp_POP (&read_b, element))
-
-#define NUMBER (comand.imm = (element_type_d(element, &arg_num, &arg_reg) == conv::NUMBER))
-#define REGISTER (comand.reg = (element_type_d(element, &arg_num, &arg_reg) == conv::REGISTER))
-#define RAM_OPEN element_type_d(element, &arg_num, &arg_reg) == conv::RAM_TYPE_OPEN
-#define RAM_CLOSE (comand.mem = (element_type_d(element, &arg_num, &arg_reg) == conv::RAM_TYPE_CLOSE))
-#define _PLUS (element_type_d(element, &arg_num, &arg_reg) == conv::PLUS)
-
+#define GET_ELEM !(data->state_func = buf_comp_POP (&read_b, element, true))
+#define NEXT buf_comp_POP (&read_b, element, false);
+#define TYPE type = element_type_d(element);
 #define SYNTAXERR {printf ("\n--LINE-- (%d)\n \"%s\"", number_line, element);\
                     PRINT_ERROR (" - command NOT DEFINED in \"COMPILATOR.h\"") \
                     data->state_func = conv::NOINSTRUCTION_H; \
@@ -211,8 +209,8 @@ char *ConverterToMC (Compiler_t *data) {
         data->MC = (char *) calloc (data->size_buf, 1);
         char *out_buf = data->MC;
 
-        while (GET_NEXT) {  // Получает команду и записывает её в element
-            comand = {0};
+        while (GET_ELEM) {  // Получает команду и записывает её в element
+            NEXT
 
             unsigned i = 0;
             for (; i < size_commands; i++) {      // Проверяет существование команды в списке commands
@@ -232,45 +230,20 @@ char *ConverterToMC (Compiler_t *data) {
             number_line++;
             printf ("%s ", element);
 
-//#include "instruction_comp.h"
+
+            bool exit = false;
+            comand = {0};
             number_t arg_num = 0;
             reg_t arg_reg = 0;
-            switch ((const unsigned) i) {
-                case cmd_PUSH: {
-                    if (GET_NEXT) {
-                        if (NUMBER || REGISTER) {     // push 5 || push ax
-                            break;
-                        } else if (RAM_OPEN) {  // push [
-                            if (GET_NEXT) {
-                                if (NUMBER || REGISTER) {       // push [ 5 || push [ ax
-                                    if (GET_NEXT) {
-                                        if (RAM_CLOSE) {          // push [ ax ] || push [ 5 ]
-                                            break;
-                                        } else if (_PLUS) {
-                                            if (GET_NEXT) {
-                                                if (NUMBER ||
-                                                    REGISTER) {       // push [ 5 + bx  || push [ ax + 7 
-                                                    if (GET_NEXT) {
-                                                        if (RAM_CLOSE) {           // push [ 5 + bx ] || push [ ax + 7 ]
-                                                            break;
-                                                        } else SYNTAXERR
-                                                    } else SYNTAXERR
-                                                } else SYNTAXERR
-                                            } else SYNTAXERR
-                                        } else SYNTAXERR
-                                    } else SYNTAXERR
-                                } else SYNTAXERR
-                            } else SYNTAXERR
-                        } else SYNTAXERR
-                    } else SYNTAXERR
-                }
-                default: SYNTAXERR
-            }
-            printf ("M:%d, I:%d, R:%d", comand.mem, comand.imm, comand.reg);
-            printf (" NUM:%lg, REG:%d\n", arg_num, arg_reg);
-#undef POP
-        }
+            comand.code = i;
 
+#include "instruction_comp.h"
+            // Здесь нужно положить команду в выходной буффер
+            if (exit)
+                break;
+        }
+#undef GET_ELEM
+#undef NEXT
     } else {
         PRINT_ERROR ("No instructions for compiling this type.")
         data->state_func = conv::NOINSTRUCTION;

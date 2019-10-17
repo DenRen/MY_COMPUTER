@@ -114,7 +114,8 @@ namespace conv {
         NUMBER,
         REGISTER,
         RAM_TYPE_OPEN,
-        RAM_TYPE_CLOSE
+        RAM_TYPE_CLOSE,
+        PLUS
     };
 };
 
@@ -139,30 +140,38 @@ int el_is_number (char c) {
     return c >= '0' && c <= '9';
 }
 
-int element_type (const char *element) {
+int element_type_d (const char *element, number_t *arg_num, reg_t *arg_reg) {
     const char *necess_symbols = necess_symb;
     const char *RAM_symbols = RAM_symb;
+    const char *element_old = element;
 
-    if (strchr (necess_symbols, *element)) {
+    if (strchr (necess_symbols, *element)) {    // '[', ']', '+'
         if (*element == RAM_symbols[0]) {
             return conv::RAM_TYPE_OPEN;
+        } else if (*element == RAM_symbols[1]) {
+            return conv::RAM_TYPE_CLOSE;
+        } else if (*element == necess_symbols[2]) {
+            return conv::PLUS;
         }
-    } else if (el_is_number (*element)) {
+    } else if (el_is_number (*element) || *element == '-') {    // number or -number
         while (el_is_number (*(++element)));
         if (*(element - 1) == '.')
             while (el_is_number (*(++element)));
         if (!el_is_number (*(element - 1)))
             return -1;
+        *arg_num = strtod (element_old, nullptr);
         return conv::NUMBER;
-    } else {
+    } else {                                    // registers
         unsigned i = 0;
         for (; i < size_registers + 1; i++)
             if (i == size_registers)
                 return -1;
-            else if (!strcmp (element, registers[i]))
+            else if (!strcmp (element, registers[i])) {
+                *arg_reg = i;
                 return conv::REGISTER;
+            }
     }
-    return 0;
+    return -1;
 }
 
 char *ConverterToMC (Compiler_t *data) {
@@ -188,10 +197,11 @@ char *ConverterToMC (Compiler_t *data) {
 
 #define GET_NEXT !(data->state_func = buf_comp_POP (&read_b, element))
 
-#define NUMBER (comand.imm = element_type(element) == conv::NUMBER)
-#define REGISTER (comand.reg = element_type(element) == conv::REGISTER)
-#define RAM_OPEN element_type(element) == conv::RAM_TYPE_OPEN
-#define RAM_CLOSE (comand.mem = element_type(element) == conv::RAM_TYPE_CLOSE)
+#define NUMBER (comand.imm = (element_type_d(element, &arg_num, &arg_reg) == conv::NUMBER))
+#define REGISTER (comand.reg = (element_type_d(element, &arg_num, &arg_reg) == conv::REGISTER))
+#define RAM_OPEN element_type_d(element, &arg_num, &arg_reg) == conv::RAM_TYPE_OPEN
+#define RAM_CLOSE (comand.mem = (element_type_d(element, &arg_num, &arg_reg) == conv::RAM_TYPE_CLOSE))
+#define _PLUS (element_type_d(element, &arg_num, &arg_reg) == conv::PLUS)
 
 #define SYNTAXERR {printf ("\n--LINE-- (%d)\n \"%s\"", number_line, element);\
                     PRINT_ERROR (" - command NOT DEFINED in \"COMPILATOR.h\"") \
@@ -214,7 +224,7 @@ char *ConverterToMC (Compiler_t *data) {
 
                     printf ("%s --LINE-- %d\n", element, number_line);
                     PRINT_ERROR ("Unknown command or syntax error in line")
-
+                    printf ("LOL%sLOL", element);
                     free (out_buf);
                     return nullptr;
                 }
@@ -223,34 +233,41 @@ char *ConverterToMC (Compiler_t *data) {
             printf ("%s ", element);
 
 //#include "instruction_comp.h"
+            number_t arg_num = 0;
+            reg_t arg_reg = 0;
             switch ((const unsigned) i) {
                 case cmd_PUSH: {
                     if (GET_NEXT) {
-                        if (NUMBER || REGISTER || RAM_OPEN)                 // push 5 || push ax
-
-
-                        else if ((comand.mem = RAM_OPEN)) {             // push [
+                        if (NUMBER || REGISTER) {     // push 5 || push ax
+                            break;
+                        } else if (RAM_OPEN) {  // push [
                             if (GET_NEXT) {
-                                if ((comand.imm = NUMBER) ||            // push [ 5
-                                    (comand.reg = REGISTER)) {          // push [ ax
+                                if (NUMBER || REGISTER) {       // push [ 5 || push [ ax
                                     if (GET_NEXT) {
-                                        if () {          // push [ ax
-
-
-
+                                        if (RAM_CLOSE) {          // push [ ax ] || push [ 5 ]
+                                            break;
+                                        } else if (_PLUS) {
+                                            if (GET_NEXT) {
+                                                if (NUMBER ||
+                                                    REGISTER) {       // push [ 5 + bx  || push [ ax + 7 
+                                                    if (GET_NEXT) {
+                                                        if (RAM_CLOSE) {           // push [ 5 + bx ] || push [ ax + 7 ]
+                                                            break;
+                                                        } else SYNTAXERR
+                                                    } else SYNTAXERR
+                                                } else SYNTAXERR
+                                            } else SYNTAXERR
                                         } else SYNTAXERR
                                     } else SYNTAXERR
-
-
                                 } else SYNTAXERR
                             } else SYNTAXERR
                         } else SYNTAXERR
                     } else SYNTAXERR
-                    break;
                 }
                 default: SYNTAXERR
-
             }
+            printf ("M:%d, I:%d, R:%d", comand.mem, comand.imm, comand.reg);
+            printf (" NUM:%lg, REG:%d\n", arg_num, arg_reg);
 #undef POP
         }
 
@@ -311,7 +328,6 @@ void Cleaner (Compiler_t *data) {
                 comment = false;
             }
         else if (r == symbol_comment) {
-
             comment = true;
         } else {
             if (r == sep || isspace (r)) {
@@ -328,8 +344,8 @@ void Cleaner (Compiler_t *data) {
                 *w++ = r;
                 *w++ = sep;
                 new_size += 2;
-                space = false;
-            } else if (isalnum (r)) {
+                space = true;
+            } else if (isalnum (r) || r == '-') {
                 *w++ = r;
                 new_size++;
                 space = false;

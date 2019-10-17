@@ -13,10 +13,8 @@
   <component name="ChangeListManager">
     <list default="true" id="bfc40200-bdc5-461a-80db-ad7423422865" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Super_Stack_Library.h" beforeDir="false" afterPath="$PROJECT_DIR$/Super_Stack_Library.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/COMPILATOR.h" beforeDir="false" afterPath="$PROJECT_DIR$/COMPILATOR.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER.cbp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/input.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
@@ -97,7 +95,7 @@
       <workItem from="1571162873272" duration="3302000" />
       <workItem from="1571175500123" duration="23235000" />
       <workItem from="1571259953044" duration="4457000" />
-      <workItem from="1571296455823" duration="1792000" />
+      <workItem from="1571296455823" duration="8283000" />
     </task>
     <servers />
   </component>

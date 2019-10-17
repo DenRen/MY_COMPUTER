@@ -17,6 +17,7 @@
 
 typedef double number_t;
 typedef __uint8_t comand_t;
+typedef __uint8_t reg_t;
 
 enum COMMANDS {
     cmd_PUSH,

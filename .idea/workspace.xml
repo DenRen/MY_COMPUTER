@@ -13,7 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="04120375-8b42-4234-8ff6-db7fc5d5193c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/COMPILATOR.h" beforeDir="false" afterPath="$PROJECT_DIR$/COMPILATOR.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyLib.h" beforeDir="false" afterPath="$PROJECT_DIR$/MyLib.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/MY_COMPUTER" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/input.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/instruction_comp.h" beforeDir="false" afterPath="$PROJECT_DIR$/instruction_comp.h" afterDir="false" />
@@ -52,14 +52,15 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C/C++" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/cmake-build-debug" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cmake-build-debug" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -104,6 +105,9 @@
       <workItem from="1571296455823" duration="1792000" />
       <workItem from="1571348707957" duration="3405000" />
       <workItem from="1571352234162" duration="89000" />
+      <workItem from="1571389292610" duration="599000" />
+      <workItem from="1571410933343" duration="1445000" />
+      <workItem from="1571423522753" duration="10276000" />
     </task>
     <servers />
   </component>

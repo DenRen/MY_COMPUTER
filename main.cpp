@@ -7,9 +7,23 @@
 // В КАЖДОМ ENUM первый должен стоять ALL_RIGHT или начинаться с 1!
 // ONLY IF sizeof(char) == 1    // Написать проверку на эту совместимость
 
+void bprintf (unsigned char c) {
+    unsigned int a[8];
+    for (int i = 0; i < 8; i++, c /= 2)
+        a[i] = c % 2;
+    for (int i = 7; i >= 0; i--)
+        printf ("%d", a[i]);
+}
+
+void bprintf_buf (unsigned char *MC_buf, size_t size) {
+    size_t old_size = size;
+    while (size)
+        bprintf (MC_buf[old_size - size--]);
+}
+
 struct Compiler_t {
     char *buf;              // Буффер, где лежит необр. текстовые команды
-    char *MC;               // Итоговый машинный код
+    void *MC;               // Итоговый машинный код
     unsigned size_buf;      // Размер буффера в байтах
     unsigned count_elem;    // Кол-во элементов в буфере (Пример: "push 5" -> count == 2)
     int state_stack;        // Код ошибки самого стека (например SYNTAX_ERROR)
@@ -18,14 +32,14 @@ struct Compiler_t {
 
 struct CmdCode_t {
     comand_t code   : 5;
-    comand_t mem    : 1;
-    comand_t imm    : 1;
     comand_t reg    : 1;
+    comand_t imm    : 1;
+    comand_t mem    : 1;
 };
 
 void Cleaner (Compiler_t *data);
 
-char *ConverterToMC (Compiler_t *data);
+unsigned char *ConverterToMC (Compiler_t *data);
 
 /*
  * DIM
@@ -42,14 +56,33 @@ namespace compclnr {
     };
 }
 
+namespace conv {
+    enum Converter_ERROR {
+        ALL_RIGTH,
+        NOINSTRUCTION,      // Нет инструкции для выполнения этой команды
+        NOINSTRUCTION_H,    // Команды нет в COMPILATOR.h
+        CALLOC_ERROR,
+        SYNTAX_ERROR,
+        CMD_TOO_LARGE,
+        BUF_ENDED,
+        NUMBER,
+        REGISTER,
+        RAM_TYPE_OPEN,
+        RAM_TYPE_CLOSE,
+        PLUS
+    };
+};
 
 int main () {
     const char name_file_input[] = "input.txt";
+    const char name_file_output[] = "machinecode.mir";
+
     Compiler_t data_ciler = {};     //DATA CompILER
     data_ciler.state_func = 0;
     data_ciler.size_buf = 0;
 
-    data_ciler.buf = Read_File_To_Buffer (name_file_input, &data_ciler.size_buf, &data_ciler.state_func, true, true);
+    data_ciler.buf = rftb::Read_File_To_Buffer (name_file_input, &data_ciler.size_buf, &data_ciler.state_func, true,
+                                                true);
     if (data_ciler.state_func) {
         free (data_ciler.buf);
         return 0;
@@ -63,13 +96,27 @@ int main () {
 
     printf ("%s\n", data_ciler.buf);
 
-    char *MC = ConverterToMC (&data_ciler);
+    __uint8_t *MC = ConverterToMC (&data_ciler);
 
-    if (data_ciler.state_func != ALL_RIGHT || data_ciler.state_stack != ALL_RIGHT) {
+    if (data_ciler.state_func != conv::ALL_RIGTH || MC == nullptr ||
+        data_ciler.state_stack != conv::ALL_RIGTH) {
+        free (data_ciler.buf);
+        free (data_ciler.MC);
+        return 0;
+    }
+
+    FILE *file_out = fopen (name_file_output, "w");
+    if (file_out == nullptr) {
+        PRINT_ERROR ("")
+        fclose (file_out);
+        free (data_ciler.MC);
         free (data_ciler.buf);
         return 0;
     }
 
+    fwrite (MC, 1, data_ciler.count_elem, file_out);
+
+    free (data_ciler.MC);
     free (data_ciler.buf);
     return 0;
 }
@@ -103,21 +150,6 @@ int copy_str (char *to, char *from_b, char *from_e) {
     return 0;
 }
 
-namespace conv {
-    enum Converter_ERROR {
-        NOINSTRUCTION,      // Нет инструкции для выполнения этой команды
-        NOINSTRUCTION_H,    // Команды нет в COMPILATOR.h
-        CALLOC_ERROR,
-        SYNTAX_ERROR,
-        CMD_TOO_LARGE,
-        BUF_ENDED,
-        NUMBER,
-        REGISTER,
-        RAM_TYPE_OPEN,
-        RAM_TYPE_CLOSE,
-        PLUS
-    };
-};
 
 int buf_comp_POP (char **read_b, char *element, bool next = true) {
     static char *read_e;
@@ -177,12 +209,16 @@ int element_type_d (const char *element) {
     return -1;
 }
 
-char *ConverterToMC (Compiler_t *data) {
+unsigned char *ConverterToMC (Compiler_t *data) {
     // Для каждого типа конверитирование разное
 
     char *buf = data->buf;
     unsigned size_buf = data->size_buf;
     char sep = symb_separator;
+
+    void *out_buf = calloc (data->size_buf, 1);
+    data->MC = out_buf;
+    size_t size_MC = 0;
 
     const size_t TYPE = typeid (number_t).hash_code ();
     if (TYPE == typeid (double).hash_code ()) {
@@ -205,9 +241,6 @@ char *ConverterToMC (Compiler_t *data) {
                     PRINT_ERROR (" - command NOT DEFINED in \"COMPILATOR.h\"") \
                     data->state_func = conv::NOINSTRUCTION_H; \
                     data->state_stack = conv::SYNTAX_ERROR; return nullptr;}
-
-        data->MC = (char *) calloc (data->size_buf, 1);
-        char *out_buf = data->MC;
 
         while (GET_ELEM) {  // Получает команду и записывает её в element
             NEXT
@@ -238,20 +271,45 @@ char *ConverterToMC (Compiler_t *data) {
             comand.code = i;
 
 #include "instruction_comp.h"
+
             // Здесь нужно положить команду в выходной буффер
+            // Сначала записываются регистры, потом числа
+
+            *(CmdCode_t *) out_buf = comand;
+            size_MC += sizeof (CmdCode_t);
+            out_buf = (CmdCode_t *) out_buf + 1;
+
+            if (comand.reg) {
+                *(reg_t *) out_buf = arg_reg;
+                size_MC += sizeof (reg_t);
+                out_buf = (reg_t *) out_buf + 1;
+            }
+
+            if (comand.imm) {
+                *(number_t *) out_buf = arg_num;
+                size_MC += sizeof (number_t);
+                out_buf = (number_t *) out_buf + 1;
+            }
             if (exit)
                 break;
         }
 #undef GET_ELEM
 #undef NEXT
+        if (data->state_func != conv::BUF_ENDED)
+            return nullptr;
+        else
+            data->state_func = conv::ALL_RIGTH;
+
     } else {
         PRINT_ERROR ("No instructions for compiling this type.")
         data->state_func = conv::NOINSTRUCTION;
         return nullptr;
     }
 
-    char *MC = (char *) calloc (size_buf, 1);
-    return nullptr;
+    bprintf_buf ((unsigned char *) data->MC, size_MC);
+    data->count_elem = size_MC;
+
+    return (unsigned char *) data->MC;
 }
 
 void Cleaner (Compiler_t *data) {

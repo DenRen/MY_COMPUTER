@@ -58,7 +58,7 @@
                         TYPE                                                                        \
                     }                                                                               \
                                                                                                     \
-                    printf ("\tNUM:%lg, REG:%d\t", arg_num, arg_reg);                               \
+                    printf ("\tREG:%d, NUM:%lg\t", arg_num, arg_reg);                               \
                     printf ("M:%d, I:%d, R:%d\n", comand.mem, comand.imm, comand.reg);
 
 switch ((const unsigned) i) {
@@ -68,7 +68,7 @@ switch ((const unsigned) i) {
     }
     // Команды, которые не требуют аргументов и могут положить результат выполнения команды в регистер или RAM
     // Т.е. невозможна ситуация pop 5 + ax, почему? Ну объясните тогда это мне denrenruslan@gmail.com )))
-    case cmd_POP:       // Не забудем, что невозможна ситуация: pop 5 + ax
+    case cmd_POP: // Не забудем, что невозможна ситуация: pop 5 + ax
     case cmd_ADD: // ADD - сложить два числа в стеке и положить результат в стек. ADD [cx + 3] сложить и положить результат в RAM [cx + 3]
     case cmd_SUB: // SUB - вычесть их верхнего нижний элемент стека и положить результат в стек. SUB [cx + 3] положить результат в RAM [cx + 3]
     case cmd_MUL:
@@ -77,7 +77,7 @@ switch ((const unsigned) i) {
     case cmd_LOGN:
     case cmd_COS: {
         GET_ARG
-        if (!comand.mem && (comand.imm || comand.reg)) SYNTAXERR //pop 5 || pop ax
+        if (!comand.mem && comand.imm) SYNTAXERR //pop 5
         break;
     }
     case cmd_EXIT: {
